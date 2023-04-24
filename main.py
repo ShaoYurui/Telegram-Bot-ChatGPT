@@ -26,7 +26,7 @@ async def generate_gpt_response(user_message: str):
     return response.choices[0].message.content
 
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Generate a response from ChatGPT based on the user message."""
     user_message = update.message.text
     gpt_response = await generate_gpt_response(user_message)
@@ -35,5 +35,5 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 if __name__ == '__main__':
     application = Application.builder().token(TELEGRAM_API_TOKEN).build()
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
     application.run_polling()
