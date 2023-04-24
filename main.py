@@ -16,22 +16,14 @@ logging.basicConfig(
 
 
 async def generate_gpt_response(user_message: str):
-    system_message = "You are a helpful chatbot using GPT-4. "
-    user_prompt = "User: "
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=system_message + user_prompt + user_message,
-        max_tokens=500,
-        n=1,
-        stop=None,
-        temperature=0.8,
+    system_message = "You are a helpful chat bot"
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "system", "content": system_message},
+                  {"role": "user", "content": user_message}]
     )
 
-    response = response.choices[0].text.strip()
-    if "\n\n" in response:
-        response = response.split("\n\n")[-1]
-
-    return response
+    return response.choices[0].message.content
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -43,7 +35,5 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 if __name__ == '__main__':
     application = Application.builder().token(TELEGRAM_API_TOKEN).build()
-
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
-
     application.run_polling()
